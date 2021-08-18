@@ -1,2 +1,2 @@
 # immuno
-clean health article corpus
+clean corpus of health articles
