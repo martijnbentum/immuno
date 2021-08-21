@@ -13,13 +13,14 @@ class Text(models.Model):
 	extraction_type = models.ForeignKey(ExtractionType, **dargs, 
 		related_name = 'extraction_type')
 	text = models.TextField(default='')
+	error = models.BooleanField(default=False)
 
 	def __repr__(self):
-		return 'Text: ' + self.name
+		return 'Text: ' + self.name + ' ' + str(self.error)
 
 	@property
 	def nwords(self):
-		return len(text.replace('\n',' ').split(' '))
+		return len(self.text.replace('\n',' ').split(' '))
 
 	@property
 	def name(self):
@@ -38,6 +39,9 @@ class Article(models.Model):
 	
 	def __repr__(self):
 		return 'Article: ' +self.name
+	
+	def __str__(self):
+		return self.filename.split('/')[-1]
 
 	@property
 	def nwords(self):
