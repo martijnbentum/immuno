@@ -32,8 +32,13 @@ def extract_text_from_pdf(filename, method = 'pdfminer'):
 
 def make_text(filename,method = 'pdfminer', save = True):
 	et = ExtractionType.objects.get(name=method)
-	t = extract_text_from_pdf(filename, method)
-	instance = Text(filename=filename, text = t, extraction_type = et)
+	error = False
+	try:t = extract_text_from_pdf(filename, method)
+	except:
+		t = str(sys.exc_info())
+		error = True
+	instance = Text(filename=filename, text = t, extraction_type = et, 
+		error = error)
 	if save:
 		try: instance.save()
 		except:print('could not save text:',filename,instance,sys.exc_info())
