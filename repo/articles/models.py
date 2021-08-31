@@ -2,7 +2,7 @@ from django.db import models
 import glob
 import numpy as np
 import os
-from utils import miner
+from utils import miner, view
 import re
 
 
@@ -96,12 +96,20 @@ class Article(models.Model):
 		if len(year) ==1:return int(year[0])
 		else: return 0
 
+	def show(self, page = 0):
+		p = self.layout.pages[page] 
+		p.check_for_overlap()
+		p.check_for_size()
+		reference_pagenumber= self.layout.reference_pagenumber
+		exclude_after_reference,exclude_all=False,False
+		if not reference_pagenumber: exclude_after_reference = False
+		elif p.page_number == reference_pagenumber: exclude_after_reference =True
+		elif p.page_number > reference_pagenumber: exclude_all = True
+		view.show_page(p,exclude_after_reference=exclude_after_reference, 
+			exclude_all = exclude_all)
 
-	
 
+	def show_all_pages(self):
+		for i in range(self.layout.npages):
+			self.show(i)
 		
-	
-
-
-
-	
