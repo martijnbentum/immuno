@@ -2,7 +2,7 @@ import re
 
 
 BLUE = '\033[94m'
-RED= '\033[93m'
+RED= '\033[91m'
 GREEN = '\033[92m'
 END = '\033[0m'
 ref = 'references,reference,literature'.split(',')
