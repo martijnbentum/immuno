@@ -2,12 +2,43 @@ import pytesseract
 from pdf2image import convert_from_path
 from articles.models import Article
 from utils.clean_article import BLUE, GREEN, RED, END
+from utils import tesseract
 import os
 
 ocr_dir = '../OCR_TEXT/'
 
 filename_taken = 'filename_taken' 
 filename_done = 'filename_done' 
+
+
+def make_output_text(output_dir = '../articles/'):
+	clean_dir = output_dir + 'clean/'
+	junk_dir = output_dir + 'removed_texts/'
+	if not os.path.isdir(output_dir):os.mkdir(output_dir)
+	if not os.path.isdir(clean_dir):os.mkdir(clean_dir)
+	if not os.path.isdir(junk_dir):os.mkdir(junk_dir)
+	articles = Article.objects.all()
+	make_year_file(articles, output_dir)
+	for a in articles:
+		pdf = tesseract.Pdf(a.filename)
+		text = pdf.text()
+		junk = pdf.text(only_page_numbers=True,return_non_usable_text=True)
+		with open(clean_dir + pdf.filename + '.txt','w') as fout:
+			fout.write(text)
+		with open(junk_dir+ pdf.filename + '.txt','w') as fout:
+			fout.write(junk)
+
+
+
+def make_year_file(articles, output_dir):
+	output = []
+	for a in articles:
+		output.append([a.filename.split('/')[-1],str(a.year)])
+	with open(output_dir+'article_names_and_years.txt','w') as fout:
+		fout.write('\n'.join(['\t'.join(l) for l in output]))
+		
+	
+	
 
 def get_info():
 	filenames,last_pages = [], []
